@@ -1,0 +1,9 @@
+{
+  "monitorID": "1234567890",
+  "monitorURL": "neard.io",
+  "monitorFriendlyName": "HTTP",
+  "alertType": "1",
+  "alertTypeFriendlyName": "Down",
+  "alertDetails": "HTTP 404 - Not Found",
+  "alertDuration": "*alertDuration*"
+}

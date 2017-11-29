@@ -1,0 +1,9 @@
+{
+  "monitorID": "1234567890",
+  "monitorURL": "neard.io",
+  "monitorFriendlyName": "HTTP",
+  "alertType": "2",
+  "alertTypeFriendlyName": "Up",
+  "alertDetails": "HTTP 200 - OK",
+  "alertDuration": "169"
+}

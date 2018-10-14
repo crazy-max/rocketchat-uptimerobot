@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2 (2017/10/14)
+## 0.2 (2018/10/14)
 
 * Username and avatar are embedded
 * Review post content

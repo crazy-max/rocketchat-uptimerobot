@@ -2,35 +2,16 @@
  * uptimerobot-incoming.js
  * Add Uptime Robot notifications via a new WebHook in Rocket.Chat
  * @license MIT
- * @version 0.1
+ * @version 0.2
  * @author  CrazyMax, https://github.com/crazy-max
- * @updated 2017-11-29
+ * @updated 2018-10-14
  * @link    https://github.com/crazy-max/rocketchat-uptimerobot
  */
 
 /* globals console, _, s */
 
-const getData = (obj) => {
-  let statusColor = "#A63636";
-  let statusText = "DOWN";
-  let alertDuration = 0;
-  if (obj.alertType === "2") {
-    statusColor = "#36A64F";
-    statusText = "UP";
-    alertDuration = convertAlertDuration(obj.alertDuration);
-  }
-
-  return {
-    statusColor: statusColor,
-    statusText: statusText,
-    isUp: obj.alertType === "2",
-    monitorID: obj.monitorID,
-    monitorURL: obj.monitorURL,
-    monitorFriendlyName: obj.monitorFriendlyName,
-    alertDetails: obj.alertDetails,
-    alertDuration: alertDuration,
-  };
-};
+const USERNAME = 'Uptime Robot';
+const AVATAR_URL = 'https://raw.githubusercontent.com/crazy-max/rocketchat-uptimerobot/master/res/avatar.png';
 
 const convertAlertDuration = (seconds) => {
   let days = Math.floor(seconds / (3600 * 24));
@@ -57,35 +38,36 @@ const convertAlertDuration = (seconds) => {
   return result;
 };
 
-const buildMessage = (obj) => {
-  const data = getData(obj);
-
-  let template = `Monitor is ${data.statusText}: [${data.monitorFriendlyName}](https://uptimerobot.com/dashboard.php#${data.monitorID})`;
-  template += ` (${data.monitorURL}).`;
-  if(data.isUp) {
-    template += ` It was down for ${data.alertDuration}`;
-  } else {
-    template += ` Reason: ${data.alertDetails}`;
-  }
-
-  return {
-    text: template,
-    color: data.statusColor
-  };
-};
-
 /* exported Script */
 class Script {
   /**
    * @params {object} request
    */
   process_incoming_request({ request }) {
-    msg = buildMessage(request.content);
+    let data = request.content;
+    let attachmentColor = `#A63636`;
+    let statusText = `DOWN`;
+    let isUp = data.alertType === `2`;
+    if (isUp) {
+      attachmentColor = `#36A64F`;
+      statusText = `UP`;
+    }
+
+    let attachmentText = `[${data.monitorFriendlyName}](https://uptimerobot.com/dashboard.php#${data.monitorID}) is ${statusText} (${data.monitorURL}).\n`;
+    if (isUp) {
+      attachmentText += `It was down for ${convertAlertDuration(data.alertDuration)}`;
+    } else {
+      attachmentText += `Reason: ${data.alertDetails}`;
+    }
+
     return {
       content:{
+        username: USERNAME,
+        icon_url: AVATAR_URL,
+        text: `Monitor [${data.monitorFriendlyName}](https://uptimerobot.com/dashboard.php#${data.monitorID}) status has changed.`,
         attachments: [{
-          text: msg.text,
-          color: msg.color
+          text: attachmentText,
+          color: attachmentColor
         }]
       }
     };
